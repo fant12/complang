@@ -47,7 +47,7 @@ function TextAnalyzer(content, contentLanguage, jsonFile){
 TextAnalyzer.prototype.analyzeResult = function(text, to, obj){
     
     //count sentence number
-    var countSentence = this.content.match(/[\.]/g);
+    var countSentence = this.content.match(/(\.\s)|(\?\s)|(\!\s)/g);
     countSentence = (null !== countSentence) ? countSentence.length : 1;
     
     //get string between [[[ ]]
