@@ -210,7 +210,7 @@ app.get('/', function(request, response) {
     response.render("index", { 
         languageCode: request.body.langCode,
         possibleLanguages: languages,
-        translated: "Bitte tragen Sie hier Ihren eigenen Text ein",
+        translated: "Bitte tragen Sie hier Ihren eigenen Text ein.",
     });    
 });
 
