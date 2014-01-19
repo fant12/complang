@@ -236,10 +236,10 @@ function drawMap(data, diaLabels){
              */ 
             DiaState.prototype.drawChart = function(labels){
             
-                makeRectBase(this.x, this.y);
-                makeRectDia(this.data, this.x, this.y, this.name);
-                makeTextDia(this.data, this.x, this.y, this.name);
-                makeTextBase(labels, this.x, this.y, this.name);
+                this.makeRectBase();
+                this.makeRectDia();
+                this.makeTextDia();
+                this.makeTextBase(labels);
             };
       
             // Zeichne alle Diagramme
@@ -251,41 +251,38 @@ function drawMap(data, diaLabels){
      * @brief Funktion zum Zeichnen der unteren Achse auf der die S&auml;ulen stehen.
      * @description Es wird dem SVG-Element ein Rechteck angeh&auml;ngt mit den &uuml;bergebenen Parametern 
      * als Attribute, sowie H&ouml;he, Breite und Farbe.
-     * @param {int} xKoordinate  - x-Koordinate des Landes.
-     * @param {int} yKoordinate - y-Koordinate des Landes.
      */ 
-    function makeRectBase(xKoordinate, yKoordinate) {
+    DiaState.prototype.makeRectBase = function() {
         svg.selectAll("rectBase")
             .data([0]).enter()
             .append("rect")
-            .attr("x", xKoordinate)
-            .attr("y", yKoordinate)
+            .attr("x", this.x)
+            .attr("y", this.y)
             .attr("width", RECTBASE_WIDTH)
             .attr("height", RECTBASE_HEIGHT)
             .attr("style", "fill: #000");
-    }
+    };
     
     /**
      * @brief Funktion zum Zeichnen der S&auml;ulen im Diagramm. 
      * @description Dem SVG-Element werden Rechtecke angeh&auml;ngt mit einer Klasse mit der Element-Bezeichnung und dem L&auml;nder-Namen.
      * Die x und y -Attribute werden  durch Funktionen berechnet, die anhand der &uuml;bergebenen Daten die Abst&auml;nde berechnet.
      * Noch ist die H&ouml;he auf 0, da die Balken erst bei Ber&uuml;hren der L&auml;nder ausgefahren wird.
-     * @param {Array} data - Daten für Diagramm
-     * @param {int} xKoordinate - x-Koordinate des Landes.
-     * @param {int} yKoordinate - y-Koordinate des Landes.
-     * @param {String} name - Name des Landes.
      */
-    function makeRectDia (data, xKoordinate, yKoordinate, name){
+    DiaState.prototype.makeRectDia = function(){
+        
+        var me = this;
+        
         svg.selectAll("rectDia")
-            .data(data).enter().append("rect")
-            .attr("class", function() { return "rectDia " + name; })
-            .attr({x:function(d, a){ return xKoordinate + TEXT_MARGIN * a; },
-                    y: function() {	return yKoordinate; },
+            .data(me.data).enter().append("rect")
+            .attr("class", function() { return "rectDia " + me.name; })
+            .attr({x:function(d, a){ return me.x + TEXT_MARGIN * a; },
+                    y: function() {	return me.y; },
                     width: RECTDIA_WIDTH,
                     height: 0
             })
             .attr("fill",function(d, i) { return COLOR(i); });
-    }
+    };
     
     /** 
      * @brief Funktion f&uuml;r die Transition der Balken mit ihren Beschriftungen, wenn die Maus &uuml;ber ein Land f&auml;hrt.
@@ -348,23 +345,22 @@ function drawMap(data, diaLabels){
      * verschoben berechnet.
      * Es wird die Schriftart, die Gr&ouml;&szlig;e und die Farbe definiert. Die Gr&ouml;&szlig;e wird zun&auml;chst auf 0 gesetzt, 
      * da es erst definiert wird, wenn die Maus das Land ber&uuml;hrt. Der Text wird aus den Daten &uuml;bergeben. 
-     * @param {Array} data - Datensatz des Diagramms.
-     * @param {int} xKoordinate - x-Koordinate des Landes.
-     * @param {int} yKoordinate - y-Koordinate des Landes.
-     * @param {String} name - Name des Landes.
      */
-    function makeTextDia (data,xKoordinate, yKoordinate, name){
+    DiaState.prototype.makeTextDia = function(){
+        
+        var me = this;
+        
         svg.selectAll(".text")
-            .data(data)
+            .data(me.data)
             .enter().append("text")
-            .attr("class", function(){ return "textDia " + name; })
-            .attr("x", function(d, a){ return xKoordinate + TEXT_MARGIN * a; })
-            .attr("y",function(){ return yKoordinate; })
+            .attr("class", function(){ return "textDia " + me.name; })
+            .attr("x", function(d, a){ return me.x + TEXT_MARGIN * a; })
+            .attr("y",function(){ return me.y; })
             .attr("font-family", "sans-serif")
             .attr("font-size", "0px")
             .attr("fill", "white")
             .text(function(d) { return d; });
-    }
+    };
     
     /**
      * @brief Funktion f&uuml;r die Beschriftung der unteren Achse.
@@ -373,23 +369,23 @@ function drawMap(data, diaLabels){
      * verschoben berechnet.
      * Es wird die Schriftart, die Gr&ouml;&szlig;e und die Farbe definiert. Die Gr&ouml;&szlig;e wird zun&auml;chst auf 0 gesetzt, 
      * da es erst definiert wird, wenn die Maus das Land ber&uuml;hrt. Der Text wird aus den Daten &uuml;bergeben. 
-     * @param {Array} data - Datensatz des Diagramms.
-     * @param {int} xKoordinate - x-Koordinate des Landes.
-     * @param {int} yKoordinate - y-Koordinate des Landes.
-     * @param {String} name - Name des Landes.
+     * @param {Array} labels - Datensatz des Diagramms.
      */
-    function makeTextBase (data, xKoordinate, yKoordinate, name){
+    DiaState.prototype.makeTextBase = function(labels){
+        
+        var me = this;
+        
         svg.selectAll(".text")
-            .data(data)
+            .data(labels)
             .enter().append("text")
-            .attr("class", function(){ return "textBase " + name; })
-            .attr("x", function(d, a){ return xKoordinate + TEXT_MARGIN * a; })
-            .attr("y",function(){ return yKoordinate + 10; })
+            .attr("class", function(){ return "textBase " + me.name; })
+            .attr("x", function(d, a){ return me.x + TEXT_MARGIN * a; })
+            .attr("y",function(){ return me.y + 10; })
             .attr("font-family", "sans-serif")
             .attr("font-size", "10px")
             .attr("fill","black")
             .text(function(d){ return d; });
-    }
+    };
 }
 
 /**
