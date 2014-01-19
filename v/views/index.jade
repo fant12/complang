@@ -1,0 +1,76 @@
+doctype html
+html(lang="de")
+    
+    head(data-params="../data/statistics.json")
+        meta(charset="utf-8")
+        title Europäische Sprachen im Vergleich
+        link(href="../client/css/style.css" rel="stylesheet" type="text/css")
+        
+    body
+        header
+            h1 Europäische Sprachen im Vergleich
+        
+        #Wrapper
+            article
+                h3 Willkommen auf der europäischen Webseite für Sprachvergleiche.
+                p
+                | Auf der Karte (siehe unten) sind die Länder Europas abgebildet.<br />
+                | Mit der Maus ist es (via Scrolling) möglich, sich zu bestimmten Ländern Säulendiagramme
+                | anzusehen, welche die Verteilung der Vokale in den jeweiligen Ländersprachen repräsentieren.
+                | Als Beispieltext hierfür wurde das Weihnachtslied „Leise rieselt der Schnee“ verwendet, jedoch 
+                | kann im unteren Formular auch ein eigener Text eingegeben werden.
+                
+            article(id="Song")
+                blockquote
+                    | Leise rieselt der Schnee
+                    | Leise rieselt der Schnee,
+                    | Still und starr liegt der See,
+                    | Weihnachtlich glänzet der Wald.
+                    | Freue Dich, Christkind kommt bald. <br />
+                    | In den Herzen ist's warm,
+                    | Still schweigt Kummer und Harm,
+                    | Sorge des Lebens verhallt.
+                    | Freue Dich, Christkind kommt bald. <br />
+                    | Bald ist heilige Nacht;
+                    | Chor der Engel erwacht.
+                    | Horch nur, wie lieblich es schallt.
+                    | Freue Dich, Christkind kommt bald.
+                
+            #Map
+
+            article(id="FormArea")
+                h3 Text für die Analyse
+                
+                form(action="" method="post")
+                    label Sprache:
+                    select(name="langCode")
+                        each i, val in possibleLanguages
+                            if(i === languageCode)
+                                option(label= val value= i selected="selected") val
+                            else
+                                option(label= val value= i) val
+                    br
+                    br
+                    
+                    textarea(name="textToTranslate" onchange="checkTextArea();" placeholder=translated)
+                    
+                    br
+                    
+                    input(onclick="checkForm();" type="button" value="Senden")
+                    input(onclick="document.forms[0].elements[0].options[0].selected=true;" type="reset" value="Abbrechen")
+                
+            article(id="Comparison")
+                h3 Vergleich von Deutsch, Englisch und Spanisch
+                p Die Diagramme zeigen die prozentuale Verteilung der Vokale in den jeweiligen Sprachen.
+                
+                #Pie
+                    #de
+                    #en
+                    #es
+                    
+        // end wrapper
+            
+        // include scripts
+        
+        each item in ["d3.js", "d3_topo.js", "jquery.js", "map.js", "pieChart.js", "check.js"]
+            script(src="../client/js/" + item)
