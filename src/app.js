@@ -101,6 +101,7 @@ TextAnalyzer.prototype.saveAsJSON = function(text, to, obj){
     
     //ersetze alle umlaute (erst jetzt, da erst jetzt übersetzt)
     text = text.replace(/ä/g,"ae")
+                .replace(/æ/g, "ae")
                 .replace(/ö/g,"oe")
                 .replace(/ü/g,"ue")
                 .replace(/Ä/g,"Ae")
@@ -110,11 +111,11 @@ TextAnalyzer.prototype.saveAsJSON = function(text, to, obj){
     var vocals = [
                         ["a", "à", "á", "â", "A", "À", "Á", "Â"],
                         ["e", "è", "é", "ê", "E", "È", "É", "Ê"],
-                        ["i", "ì", "í", "î"],
-                        ["o", "ò", "ó", "ô", "O", "Ò", "Ó", "Ô"],
+                        ["i", "ì", "í", "î", "I", ,"Ì", "Í", "Î"],
+                        ["o", "ò", "ó", "ô", "O", "Ò", "Ó", "Ô", "ø"],
                         ["u", "ù", "ú", "û", "U", "Ù", "Ú", "Û"]
                     ];
-                    
+ 
     for(var i = 0; vocals.length > i; ++i)
         for(var j = 0; vocals[i].length > j; ++j){
             if(0 === j) 
