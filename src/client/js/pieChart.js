@@ -39,26 +39,9 @@ PieChart.prototype.fromLanguage = function(id){
 };
 
 /**
- * @brief L&auml;dt die notwendigen Daten aus der JSON-Datenbank und zeichnet das 
- * dazugeh&ouml;rige Diagramm.
+ * Funktion zum Zeichnen des Diagramms.
+ * @param {Object} data - das Datenobjekt.
  */
-PieChart.prototype.load = function(){
-
-    var me = this;
-    
-    //path: von views/index.jaade aus
-    $.getJSON(document.getElementsByTagName("head")[0].getAttribute("data-params")).done(function(data){
-            me.drawChart(data.languages[me.language]);
-    })
-    .fail(function(unused, textStatus, error){
-        console.log("Request Failed: " + textStatus + ", " + error);
-    });
-};
- 
- /**
-  * Funktion zum Zeichnen des Diagramms.
-  * @param {type} data description
-  * */
 PieChart.prototype.drawChart = function(data){
         
         var me = this;
@@ -125,10 +108,28 @@ PieChart.prototype.drawChart = function(data){
             .text(function(d, i) { return daten[i].label; }); 
 };
 
+/**
+ * @brief L&auml;dt die notwendigen Daten aus der JSON-Datenbank und l&auml;sst das  
+ * dazugeh&ouml;rige Diagramm zeichnen.
+ */
 function main(){
     
-    var languages = ["de", "en", "es", "fr", "it", "pt", "sv"];
-    for(var i = 0; languages.length > i; ++i)
-        new PieChart(languages[i]).load();
+    $.getJSON(document.getElementsByTagName("head")[0].getAttribute("data-params")).done(function(data){
+            
+            // nur Diagramme zeichnen, denen ein passendens HTMLDIVElement mit passender ID 
+            // zugeordnet werden kann
+            var possibles = Object.keys(data.languages);
+            var children = document.getElementById("Pie").childNodes;
+            for(var i = 0; children.length > i; ++i)
+                if("DIV" === children[i].tagName)
+                    if(-1 !== $.inArray(children[i].getAttribute("id"), possibles)){
+                        var chart = new PieChart(children[i].getAttribute("id"));
+                        chart.drawChart(data.languages[chart.language]);
+                    }
+    })
+    .fail(function(unused, textStatus, error){
+        console.log("Request Failed: " + textStatus + ", " + error);
+    });
 }
+
 main();
