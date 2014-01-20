@@ -6,18 +6,62 @@
  */ 
 function checkForm(){
 
-    var textArea = document.forms[0].elements[1].value.replace(/\s/g, "");
-    var words = textArea.search(/(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+\s*)+/);
+    var textArea = document.forms[0].elements[1].value;
+    textArea = textArea.replace(/[\"\u201C\u201D\u201E\u0022]/g, ""); //Sonderzeichen für dt. Anfuehrungszeichen entfernen
     
-    // Jedes Wort darf nur aus Buchstaben und Whitespaces bestehen
-    if(-1 !== words && 1 < textArea.length){
-        // Jedes Wort muss mindestens ein Vokal beinhalten, sonst ist es kein Wort
-        var vocals = textArea.match(/[aäåáàâæeéèêiíìîoöóòôøuüúùûAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÜÚÙÛ]/g);
-        if((3 > textArea.length && null !== vocals && 1 === vocals.length) || (null !== vocals))
-            document.forms[0].submit();
-        else 
-            alert("Bitte richtige Wörter (bestehend aus mindestens 2 Buchstaben) eintragen.");
+    /*
+     * Saetze bestehen aus Woertern
+     *  case insensitive Suche toleriert Rechtschreibfehler
+     *  Jedes Wort hat mindestens einen Vokal
+     *  Jedes Wort besteht aus mindestens einem Buchstaben (z.B.: I, y, e)
+     *  Wörter mit 2 Buchstaben beginnen nicht mit norwegischen Buchstaben oder dem dt. Umlaut ü|Ü
+     *  norwegische Sonderzeichen sind nur innerhalb eines Wortes, nicht am Wortrand
+     * Satzzeichen muessen erlaubt sein
+     *  Nur ? ! . duerfen mehrmals hintereinander vorkommen, . nur dreimal 
+     * 
+        ^(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+[\.\!\?\'\:,;]*\s*)+$
+    */
+    var regex = /^(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+[\.\!\?\'\:,\-;]*\s*)+$/;
+    if(null !== textArea.match(regex)){
+        
+        switch(textArea.length){
+            case 1: 
+                if(1 === textArea.match(/[aáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY]/g).length) //ohne dt. Umlaute und norweg. Buchstaben
+                    document.forms[0].submit();
+                break;
+            case 2:
+                //Satzzeichen erlaubt, da dann gleicher Fall wie bei case 1
+                if(1 <= textArea.match(/[aäáàâæeéèêiíìîoöóòôøuüúùûyAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÜÚÙÛY]/g).length)
+                    document.forms[0].submit();
+                break;
+            default:
+                
+                /*
+                    ^(
+                        \s*
+                        (
+                            ([^\.\?\!æø;:,\-\'äöüÄÖÜ])|
+                            (
+                                ([aäáàâeéèêiíìîoöóòôuúùûyAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÚÙÛY][^aåáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY])|
+                                ([^aáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY][aåáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛYæø,])
+                            )|
+                            (
+                                (([^\.\?\!æø;:,\-\'])+([^\.\?\!;:,\-\']{2,}))|
+                                ([^\.\?\!æø;:,\-\']+\-?[^\.\?\!æø;:,\-\']{2,})|
+                                ([^\.\?\!æø;:,\-\']+\'?[^\.\?\!æø;:,\-\']{1,2})
+                            )
+                        )(([\!\?]*)|(\.{0,3})|([\:,;]?))
+                        \s*
+                    )+$
+                */
+                var regex2 = /(\s*(([^\.\?\!æø;:,\-\'äöüÄÖÜ])|(([aäáàâeéèêiíìîoöóòôuúùûyAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÚÙÛY][^aáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY])|([^aáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY][aäáàâeéèêiíìîoöóòôuúùûyAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÚÙÛYæø,]))|((([^\.\?\!æø;:,\-\'])+([^\.\?\!;:,\-\']{2,}))|([^\.\?\!æø;:,\-\']+\-?[^\.\?\!æø;:,\-\']{2,})|([^\.\?\!æø;:,\-\']+\'?[^\.\?\!æø;:,\-\']{1,2})))(([\!\?]*)|(\.{1,2})|([\:,;]?))\s*)+$/;
+
+                //regex + bestimmte Sonderzeichen duerfen nicht mehr als einmal auf einmal vorkommen
+                if(-1 === textArea.search(/[\'\:,\-;]{2,}/) && regex2.test(textArea))
+                    document.forms[0].submit();
+                else
+                    alert("Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.");
+        }
     }
-    else
-        alert("Bitte richtige Wörter (bestehend aus mindestens 2 Buchstaben) eintragen.");
+    else alert("Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.");
 }
