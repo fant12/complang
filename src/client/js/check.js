@@ -22,9 +22,9 @@ function checkForm(){
         ^(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+[\.\!\?\'\:,;]*\s*)+$
     */
     var regex = /^(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+[\.\!\?\'\:,\-;]*\s*)+$/;
+    var warning = "Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.";
+
     if(null !== textArea.match(regex)){
-        
-        var warning = "Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.";
         
         switch(textArea.length){
             case 1: 
