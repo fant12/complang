@@ -153,6 +153,7 @@ TextAnalyzer.prototype.toObject = function(arr){
 TextAnalyzer.prototype.translate = function(to, obj){
     
     var el = this;
+    this.content = this.content.replace(/\\r\\n/, ""); //Zeilenumbrueche entfernen
     
     http.get(this.prepareURL("http://translate.google.de", to, this.content), function(result) {
         
