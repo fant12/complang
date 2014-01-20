@@ -70,7 +70,7 @@ TextAnalyzer.prototype.analyzeResult = function(text, to, obj){
  * @returns eine Zahl, die Anzahl an Vorkommen beschreibt.
  */ 
 TextAnalyzer.prototype.countChars = function(haystack, needle){
-    return (haystack.match(new RegExp(needle, "g")) || []).length;
+    return (haystack.match(new RegExp(needle, "gi")) || []).length;
 };
 
 /**
@@ -101,18 +101,20 @@ TextAnalyzer.prototype.saveAsJSON = function(text, to, obj){
     //ersetze alle umlaute (erst jetzt, da erst jetzt übersetzt)
     text = text.replace(/ä/g,"ae")
                 .replace(/æ/g, "ae")
+                .replace(/œ/g, "oe")
                 .replace(/ö/g,"oe")
                 .replace(/ü/g,"ue")
                 .replace(/Ä/g,"Ae")
                 .replace(/Ö/g,"Oe")
-                .replace(/Ü/g,"Ue");
-    
+                .replace(/Ü/g,"Ue")
+                .replace(/\s/g, "");
+
     var vocals = [
-                        ["a", "à", "á", "â", "A", "À", "Á", "Â"],
-                        ["e", "è", "é", "ê", "E", "È", "É", "Ê"],
-                        ["i", "ì", "í", "î", "I", "Ì", "Í", "Î"],
-                        ["o", "ò", "ó", "ô", "O", "Ò", "Ó", "Ô", "ø"],
-                        ["u", "ù", "ú", "û", "U", "Ù", "Ú", "Û"]
+                        ["a", "à", "á", "â"],
+                        ["e", "è", "é", "ê"],
+                        ["i", "ì", "í", "î"],
+                        ["o", "ò", "ó", "ô", "ø"],
+                        ["u", "ù", "ú", "û"]
                     ];
                     
     for(var i = 0; vocals.length > i; ++i)
@@ -128,6 +130,8 @@ TextAnalyzer.prototype.saveAsJSON = function(text, to, obj){
     if(this.numOfTranslations === this.numOfSuccessfulTranslations)
         fs.writeFile(this.jsonFileSavedTo, JSON.stringify(obj), function(err){
             console.log('ready');
+            obj = null;
+            data = null;
         });
 };
 
@@ -175,11 +179,12 @@ function loadData(data, language){
         (undefined === data || null === data || "" === data) ? DEF_TEXT : data,
         (undefined === language || null === language || "" === language) ? DEF_LANGUAGE : language,
         jsonFile);
-        
+    
+    console.log("\nvor filter: " + usedText.content + "\n");    
     usedText.content = usedText.content.replace(/\\r\\n/g, " "); //Zeilenumbrueche entfernen
     usedText.content = usedText.content.replace(/\\t/g, ""); //Tabs entfernen
     usedText.content = usedText.content.replace(/(\s\s)/g, ""); //doppelte Leerzeichen entfernen
-    console.log("usedText gefiltert: " + usedText.content);
+    console.log("\nusedText gefiltert: " + usedText.content + "\n\nEnde filter\n\n");
         
     var obj = {"languages":{}};
     
