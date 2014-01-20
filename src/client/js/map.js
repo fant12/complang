@@ -220,7 +220,7 @@ function drawMap(data, diaLabels){
       
             .on("mousemove", function(d){ // MouseMove-Event: Tooltip ueber Laender einblenden
             
-                var mouse = d3.mouse(svg.node()).map(function(d) { return parseInt(d); });
+                var mouse = d3.mouse(svg.node()).map(function(d) { return parseInt(d, 10); });
                 
                 var svgPos = $("#Map svg").position();
                 tooltip
