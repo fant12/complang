@@ -25,7 +25,7 @@ function checkForm(){
     var warning = "Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.";
 
     if(regex.test(textArea)){
-        alert(1);
+        
         switch(textArea.length){
             case 1: {
                 //ohne dt. Umlaute und norweg. Buchstaben
