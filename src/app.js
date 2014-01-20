@@ -47,7 +47,7 @@ function TextAnalyzer(content, contentLanguage, jsonFile){
 TextAnalyzer.prototype.analyzeResult = function(text, to, obj){
     
     //count sentence number
-    var countSentence = this.content.match(/(\.\s)|(\?\s)|(\!\s)/g);
+    var countSentence = this.content.match(/\./g);
     countSentence = (null !== countSentence) ? countSentence.length : 1;
     
     //get string between [[[ ]]
@@ -60,7 +60,6 @@ TextAnalyzer.prototype.analyzeResult = function(text, to, obj){
         text = text.substring(1+text.search(/(\[\")/), text.length);
         --countSentence;
     }
-    
     this.saveAsJSON(result, to, obj);
 };
 
@@ -85,8 +84,8 @@ TextAnalyzer.prototype.prepareURL = function(url, to, text){
     
     text = text.replace(/[\s^\n]/g, "%20");
     text = text.replace(/[,]/g, "%2C");
-    console.log("Debug: url = " + url + "/translate_a/t?client=t&sl=" + this.language + "&tl=" + to + "&hl=" + this.language + "&ie=UTF-8&oe=UTF-8&oc=2&otf=1&ssel=5&tsel=5&pc=1&q=" + text);
-    return url + "/translate_a/t?client=t&sl=" + this.language + "&tl=" + to + "&hl=" + this.language + "&ie=UTF-8&oe=UTF-8&oc=2&otf=1&ssel=5&tsel=5&pc=1&q=" + text;
+    console.log("Debug: url = " + url + "/translate_a/t?client=t&sl=" + this.contentLanguage + "&tl=" + to + "&hl=" + this.contentLanguage + "&ie=UTF-8&oe=UTF-8&oc=2&otf=1&ssel=5&tsel=5&pc=1&q=" + text);
+    return url + "/translate_a/t?client=t&sl=" + this.contentLanguage + "&tl=" + to + "&hl=" + this.contentLanguage + "&ie=UTF-8&oe=UTF-8&oc=2&otf=1&ssel=5&tsel=5&pc=1&q=" + text;
 };
 
 /**
@@ -111,11 +110,11 @@ TextAnalyzer.prototype.saveAsJSON = function(text, to, obj){
     var vocals = [
                         ["a", "à", "á", "â", "A", "À", "Á", "Â"],
                         ["e", "è", "é", "ê", "E", "È", "É", "Ê"],
-                        ["i", "ì", "í", "î", "I", ,"Ì", "Í", "Î"],
+                        ["i", "ì", "í", "î", "I", "Ì", "Í", "Î"],
                         ["o", "ò", "ó", "ô", "O", "Ò", "Ó", "Ô", "ø"],
                         ["u", "ù", "ú", "û", "U", "Ù", "Ú", "Û"]
                     ];
- 
+                    
     for(var i = 0; vocals.length > i; ++i)
         for(var j = 0; vocals[i].length > j; ++j){
             if(0 === j) 
@@ -153,7 +152,6 @@ TextAnalyzer.prototype.toObject = function(arr){
 TextAnalyzer.prototype.translate = function(to, obj){
     
     var el = this;
-    this.content = this.content.replace(/\\r\\n/, ""); //Zeilenumbrueche entfernen
     
     http.get(this.prepareURL("http://translate.google.de", to, this.content), function(result) {
         
@@ -177,6 +175,11 @@ function loadData(data, language){
         (undefined === data || null === data || "" === data) ? DEF_TEXT : data,
         (undefined === language || null === language || "" === language) ? DEF_LANGUAGE : language,
         jsonFile);
+        
+    usedText.content = usedText.content.replace(/\\r\\n/g, " "); //Zeilenumbrueche entfernen
+    usedText.content = usedText.content.replace(/\\t/g, ""); //Tabs entfernen
+    usedText.content = usedText.content.replace(/(\s\s)/g, ""); //doppelte Leerzeichen entfernen
+    console.log("usedText gefiltert: " + usedText.content);
         
     var obj = {"languages":{}};
     
