@@ -15,7 +15,7 @@ html(lang="de")
                 h3 Willkommen auf der europäischen Webseite für Sprachvergleiche.
                 p
                 | Auf der Karte (siehe unten) sind die Länder Europas abgebildet.<br />
-                | Mit der Maus ist es (via Scrolling) möglich, sich zu bestimmten Ländern Säulendiagramme
+                | Mit der Maus ist es möglich, sich zu bestimmten Ländern Säulendiagramme
                 | anzusehen, welche die Verteilung der Vokale in den jeweiligen Ländersprachen repräsentieren.
                 | Als Beispieltext hierfür wurde das Weihnachtslied „Leise rieselt der Schnee“ verwendet, jedoch 
                 | kann im unteren Formular auch ein eigener Text eingegeben werden.
@@ -46,9 +46,9 @@ html(lang="de")
                     select(name="langCode")
                         each i, val in possibleLanguages
                             if(i === languageCode)
-                                option(label= val value= i selected="selected") val
+                                option(label= val value= i selected="selected") #{val}
                             else
-                                option(label= val value= i) val
+                                option(label= val value= i) #{val}
                     br
                     br
                     
