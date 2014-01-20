@@ -24,15 +24,21 @@ function checkForm(){
     var regex = /^(\s*[a-zA-ZäåáàâæéèêíìîöóòôøüúùûÄÁÀÂÉÈÊÍÌÎÖÓÒÔÜÚÙÛ]+[\.\!\?\'\:,\-;]*\s*)+$/;
     if(null !== textArea.match(regex)){
         
+        var warning = "Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.";
+        
         switch(textArea.length){
             case 1: 
                 if(1 === textArea.match(/[aáàâeéèêiíìîoóòôuúùûyAÁÀÂEÉÈÊIÍÌÎOÓÒÔUÚÙÛY]/g).length) //ohne dt. Umlaute und norweg. Buchstaben
                     document.forms[0].submit();
+                else
+                    alert(warning);
                 break;
             case 2:
                 //Satzzeichen erlaubt, da dann gleicher Fall wie bei case 1
                 if(1 <= textArea.match(/[aäáàâæeéèêiíìîoöóòôøuüúùûyAÄÁÀÂEÉÈÊIÍÌÎOÖÓÒÔUÜÚÙÛY]/g).length)
                     document.forms[0].submit();
+                else
+                    alert(warning);
                 break;
             default:
                 
@@ -60,8 +66,8 @@ function checkForm(){
                 if(-1 === textArea.search(/[\'\:,\-;]{2,}/) && regex2.test(textArea))
                     document.forms[0].submit();
                 else
-                    alert("Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.");
+                    alert(warning);
         }
     }
-    else alert("Bitte richtige Wörter eintragen! Nur folgende Sonderzeichen: ' : , - ; dürfen verwendet werden, jedoch nicht doppelt aufeinanderfolgend.");
+    else alert(warning);
 }
