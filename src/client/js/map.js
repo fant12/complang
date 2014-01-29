@@ -227,7 +227,7 @@ function drawMap(data, diaLabels){
                 var top = svgPos.top;
                 
                 //isn't chrome?
-                if(-1 == navigator.userAgent.toLowerCase().indexOf("chrome"))
+                if(-1 === navigator.userAgent.toLowerCase().indexOf("chrome"))
                     left = document.getElementById("Map").getBoundingClientRect().left; //top += 10; left += 105;
                 
                 tooltip
