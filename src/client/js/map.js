@@ -223,9 +223,16 @@ function drawMap(data, diaLabels){
                 var mouse = d3.mouse(svg.node()).map(function(d) { return parseInt(d, 10); });
                 
                 var svgPos = $("#Map svg").position();
+                var left = svgPos.left;
+                var top = svgPos.top;
+                
+                //isn't chrome?
+                if(-1 == navigator.userAgent.toLowerCase().indexOf("chrome"))
+                    left = document.getElementById("Map").getBoundingClientRect().left; //top += 10; left += 105;
+                
                 tooltip
                     .classed("hidden", false)
-                    .attr("style", "left:" + (mouse[0]+svgPos.left) + "px;top:" + (mouse[1]+svgPos.top) + "px")
+                    .attr("style", "left:" + (mouse[0]+left) + "px;top:" + (mouse[1]+top) + "px")
                     .html(d.properties.name);
             });
             
